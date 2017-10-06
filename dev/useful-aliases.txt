@@ -1,0 +1,61 @@
+# General sysadmin
+alias genid="python -c 'import uuid; print(uuid.uuid4())'"
+alias flushmem='sync; echo 3 > /proc/sys/vm/drop_caches'
+alias ports='netstat -tulanp'
+alias meminfo='free -m -l -t -h'
+alias top10='ps auxf | sort -nr -k 3 | head -10'
+alias ycl='yum clean all && yum repolist enabled'
+alias space='du -hd 1'
+# Docker
+alias dockerkill='docker kill $(docker ps -q)'
+alias dockerrm='docker rm -v $(docker ps -aq)'
+alias dockerrmi='docker rmi $(docker images -f "dangling=true" -q)'
+alias dockerrmv='docker volume rm $(docker volume ls -f dangling=true -q)'
+alias dockerclean='dockerrm; dockerrmv; dockerrmi'
+alias dtail='docker logs -f $(docker ps -lq)'
+# Satellite helpers
+alias tailem='tail -f /var/log/messages -f /var/log/foreman/production.log -f /var/log/rhsm/rhsm.log'
+alias pulpwd='grep default_password /etc/pulp/server.conf'
+alias dpycache='rm -rf $(find . -name __pycache__)'
+
+# Copy your .bashrc to remote host
+# Will only copy items below a comment line starting with '# User'
+cpbash () {
+    # cpbash <remote host>
+    sed -n '/# User/,$p' ~/.bashrc > tmpbash
+    scp tmpbash root@$1:/root/.bashrc
+    rm tmpbash
+}
+
+# Extends the time on a Beaker box by 99 hours
+extend () {
+    if [ -n "$1" ]; then
+        ssh root@$1 'extendtesttime.sh 99'
+    else
+        extendtesttime.sh 99
+    fi
+}
+
+# Make and cd into a directory
+mcd () {
+    # mcd <new directory name>
+    mkdir -p $1
+    cd $1
+}
+
+# Flood a target Satellite with very lightweight content hosts
+# requires docker-based content host image named 'ch-d:rhel74'
+d_flood() {
+     # d_flood <count> <name> <sat/cap host> <AK>
+     for i in `seq 1 $1`; do
+         docker run -d -h $2$i --rm --log-driver=none -e "SATHOST=$3" -e "AK=$4" ch-d:rhel74
+     done
+}
+
+# Gets pip!
+getpip () {
+	wget https://bootstrap.pypa.io/get-pip.py
+	python get-pip.py
+	rm -f get-pip.py
+}
+
