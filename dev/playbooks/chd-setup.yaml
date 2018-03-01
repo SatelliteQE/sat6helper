@@ -1,9 +1,12 @@
 ---
 # This playbook will setup a docker-ized content host deployment
-# environment on the target system(s).
+# environment on the target system(s). To run this:
+# - Make sure you are in sat6helper/dev/playbooks directory and run
+# - # ansible-playbook -i hosts chd-setup.yaml
+#
 # After completion, a RHEL 7.4 docker image will be available
 # and the git repo will be located at /root/content-host-d
-- hosts: beaker
+- hosts: home
   remote_user: root
   tasks:
   - name: Install Docker
