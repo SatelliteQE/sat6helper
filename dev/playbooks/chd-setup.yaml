@@ -23,11 +23,11 @@
   - name: Clone content host repo
     git:
       repo : https://github.com/JacobCallahan/content-host-d.git
-      version : rhel74
+      version : master
       dest : /root/content-host-d
 
-  - name: Build RHEL 7.4 content host image
+  - name: Build RHEL 7 content host image
     docker_image:
-      path: /root/content-host-d
+      path: /root/content-host-d/RHEL7/
       name: ch-d
-      tag: rhel74
+      tag: rhel7
